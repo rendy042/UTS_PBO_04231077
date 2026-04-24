@@ -1,3 +1,5 @@
+import java.util.Scanner
+
 // =======================
 // Kelas Donatur
 // =======================
@@ -38,7 +40,7 @@ class Kampanye(
 }
 
 // =======================
-// Kelas Pengelola king
+// Kelas Pengelola
 // =======================
 class Pengelola(
     val id: Int,
@@ -53,50 +55,65 @@ class SistemDonasi {
     fun prosesDonasi(donatur: Donatur, kampanye: Kampanye, nominal: Double): Boolean {
         println("\n=== Proses Donasi ===")
 
-        // Validasi saldo donatur
         if (donatur.getSaldo() < nominal) {
             println("❌ Donasi ditolak: saldo tidak cukup.")
             return false
         }
 
-        // Validasi target maksimal
         if (kampanye.getSaldo() + nominal > kampanye.getTarget()) {
             println("❌ Donasi ditolak: melebihi target maksimal.")
             return false
         }
 
-        // Proses transaksi
         donatur.kurangiSaldo(nominal)
         kampanye.tambahSaldo(nominal)
 
-        println("✅ Donasi berhasil!")
-        println("Saldo Donatur: ${donatur.getSaldo()}")
-        println("Saldo Kampanye: ${kampanye.getSaldo()}")
+        println("✅ Donasi berhasil sebesar Rp$nominal")
+        println("Sisa Saldo Donatur: ${donatur.getSaldo()}")
+        println("Total Kampanye: ${kampanye.getSaldo()}")
 
         return true
     }
 }
 
 // =======================
-// Main Program
+// Main Program (INTERAKTIF)
 // =======================
 fun main() {
 
-    val donatur = Donatur(1, "Rendy", 100000.0)
+    val input = Scanner(System.`in`)
+
+    println("=== Sistem Donasi Mahasiswa ===")
+
+    // Input data donatur
+    print("Masukkan Nama Donatur: ")
+    val nama = input.nextLine()
+
+    print("Masukkan Saldo Awal: ")
+    val saldo = input.nextDouble()
+
+    val donatur = Donatur(1, nama, saldo)
     val kampanye = Kampanye(1, "Bantu Mahasiswa", 50000.0, 150000.0)
     val pengelola = Pengelola(1, "FSTI")
 
     val sistem = SistemDonasi()
 
-    println("=== Sistem Donasi Mahasiswa ===")
-    println("Pengelola: ${pengelola.nama}")
-    println("Donatur: ${donatur.nama}")
-    println("Saldo Donatur: ${donatur.getSaldo()}")
-    println("Target Kampanye: ${kampanye.getTarget()}")
-    println("Saldo Awal Kampanye: ${kampanye.getSaldo()}")
+    println("\nPengelola: ${pengelola.nama}")
+    println("Kampanye: ${kampanye.nama}")
+    println("Target: ${kampanye.getTarget()}")
 
-    // Simulasi
-    sistem.prosesDonasi(donatur, kampanye, 30000.0)
-    sistem.prosesDonasi(donatur, kampanye, 80000.0)
-    sistem.prosesDonasi(donatur, kampanye, 50000.0)
+    // Loop donasi
+    while (true) {
+        println("\nSaldo Anda: ${donatur.getSaldo()}")
+
+        print("Masukkan nominal donasi (0 untuk keluar): ")
+        val nominal = input.nextDouble()
+
+        if (nominal == 0.0) {
+            println("Terima kasih telah berdonasi 🙏")
+            break
+        }
+
+        sistem.prosesDonasi(donatur, kampanye, nominal)
+    }
 }
